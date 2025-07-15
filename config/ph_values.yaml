@@ -17,7 +17,10 @@ ph-ee-engine:
 
   operations_web:
     image: docker.io/openmf/ph-ee-operations-web:dev1 
-
+    deployment:
+      extraEnvs:
+        - name: "JAVA_TOOL_OPTIONS"
+          value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
 
 
   # importer_rdbms:
@@ -43,7 +46,7 @@ ph-ee-engine:
   #       # password: "password"
   #       host: "mysql.infra.svc.cluster.local"
   #       # port: 3306
-  #       # schema: "tenants"
+    #     # schema: "tenants"
 
   # operations:
   #   mysql:
@@ -113,6 +116,8 @@ ph-ee-engine:
           value: 'false'
         - name: ZEEBE_BROKER_EXPORTERS_KAFKA_ARGS_INDEX_CREATETEMPLATE
           value: 'false'
+        # - name: "JAVA_TOOL_OPTIONS"
+        #   value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
       resources:
         requests:
           cpu: 800m
@@ -225,6 +230,9 @@ ph-ee-engine:
           value: "greenbank"
         - name: parties_1_fspId
           value: "bluebank"
+        - name: "JAVA_OPTIONS"
+          value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+
 
   ph_ee_connector_ams_mifos:
     enabled: true
@@ -235,6 +243,13 @@ ph-ee-engine:
     # ams_local_account_host: http://fineract-server.mifosx.svc.cluster.local:8080
     # ams_local_customer_host: http://fineract-server.mifosx.svc.cluster.local:8080
     # ams_local_auth_host: http://fineract-server.mifosx.svc.cluster.local:8080
+    # env:
+    #   - name: "JAVA_OPTIONS"
+    #     value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+    # deployment:
+    #   extraEnvs:
+    #     - name: "JAVA_TOOL_OPTIONS"
+    #       value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
 
   post_installation_job:
     enabled: false
@@ -258,15 +273,21 @@ ph-ee-engine:
   operations_app:
     enabled: true
     #image: docker.io/openmf/ph-ee-operations-app:v1.20.0
+    resources:
+      limits:
+        memory: "400m"
+        # cpu: "400m"
+      requests:
+        memory: "200M"
+        # cpu: "200m"
     deployment:
       extraEnvs:
         - name: "TOMS_OPTS"
           value: "of-no-value"
         - name: "TOMS_OPTS-3"
           value: "of-no-value"
-        - name: JAVA_TOOL_OPTIONS
-          value: "-Xms128m -Xmx256m -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:9876"
-
+        - name: "JAVA_OPTS"
+          value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
   connector_bulk:
     tenants: "greenbank,bluebank"
     operations_app:
@@ -279,7 +300,7 @@ ph-ee-engine:
         containers:
           env:
             - name: "BP_JAVA_OPTS"
-              value: ""
+              value: "-Xmx200m -Xms60m"
             - name: "BP_JAVA_OPTS-1"
               value: "fred5"
             - name: "BP_JAVA_OPTS-2"
@@ -290,8 +311,7 @@ ph-ee-engine:
       extraEnvs:
         - name: JAVA_TOOL_OPTIONS
           value: |
-            -Xms128m
-            -Xmx256m
+            -Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:MaxMetaspaceSize=128m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError
             -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:5010
     # ingress:
     #   enabled: true
@@ -350,6 +370,8 @@ ph-ee-engine:
           value: "false"
         - name: "SERVER_PORT"
           value: "8080"
+        - name: "JAVA_OPTS"
+          value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
 
     ingress:
       enabled: true
@@ -397,3 +419,48 @@ ph-ee-engine:
   ph-ee-connector:
     enabled: true
 
+  # ph_ee_connector_bill_pay:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_connector_channel:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_connector:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_connector_mock_payment_schema:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_connector_mojaloop_java:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_connector_notifications:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_identity_account_mapper:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_importer_rdbms:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
+  # ph_ee_operations_app:
+  #   deployment:
+  #     extraEnvs:
+  #       - name: "JAVA_OPTIONS"
+  #         value: "-Xmx200m -Xms60m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 XX:G1HeapRegionSize=4m -XX:MaxMetaspaceSize=24m -XX:CompressedClassSpaceSize=12m -XX:MaxDirectMemorySize=24m -XX:ReservedCodeCacheSize=16m -XX:+ExitOnOutOfMemoryError -XX:+CrashOnOutOfMemoryError"
